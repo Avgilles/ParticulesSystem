@@ -3,6 +3,10 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 
+
+const loader = new THREE.TextureLoader();
+const logo =  loader.load('./0.5x.png');
+
 // Debug
 const gui = new dat.GUI()
 
@@ -15,14 +19,34 @@ const scene = new THREE.Scene()
 // Objects
 const geometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
 
+const particulesGeometry = new THREE.BufferGeometry;
+const particulesCount = 5000;
+
+const posArray = new Float32Array(particulesCount * 3);
+
+for( let i = 0; i < particulesCount * 3; i++ ){
+    posArray[i] = (Math.random() - 0.5)  * 10 ;
+    // posArray[i] = (Math.random() - 0.5) * (Math.random() - 0.5) * 5 ;
+}
+
+particulesGeometry.setAttribute( 'position', new THREE.BufferAttribute(posArray, 3));
 // Materials
 
-const material = new THREE.MeshBasicMaterial()
-material.color = new THREE.Color(0xff0000)
+const material = new THREE.PointsMaterial({
+    size : 0.005
+});
+const paticulesMaterial = new THREE.PointsMaterial({
+    size : 0.04,
+    map: logo,
+    transparent:true,
+    // color: "red",
+    // blending: THREE.AdditiveBlending
+});
 
 // Mesh
-const sphere = new THREE.Mesh(geometry,material)
-scene.add(sphere)
+const sphere = new THREE.Points(geometry,material)
+const particulesMesh = new THREE.Points(particulesGeometry, paticulesMaterial);
+scene.add(sphere, particulesMesh);
 
 // Lights
 
@@ -77,7 +101,18 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.setClearColor( new THREE.Color('#22212a'), 1);
 
+
+document.addEventListener('mousemove', animateParticles);
+
+let mouseX = 0;
+let mouseY = 0;
+
+function animateParticles(event){
+    mouseY = event.clientY;
+    mouseX = event.clientX;
+}
 /**
  * Animate
  */
@@ -88,9 +123,14 @@ const tick = () =>
 {
 
     const elapsedTime = clock.getElapsedTime()
-
     // Update objects
     sphere.rotation.y = .5 * elapsedTime
+    particulesMesh.rotation.y = -.1 * elapsedTime;
+    if(mouseX > 0 ){
+
+        particulesMesh.rotation.x = -mouseY * (elapsedTime * 0.00008);
+        particulesMesh.rotation.y = -mouseX * (elapsedTime * 0.00008);
+    }
 
     // Update Orbital Controls
     // controls.update()

@@ -4,7 +4,7 @@
 This is some information to remeber to create particules system in threee.js
 
 Visual of this commit :
-![ParticulesSystem 1 ](./static/_doc/ParticulesSystem1.png)
+![ParticulesSystem 1 ](./static/_doc/particulesSystem1.png)
 
 ## Basics
 
@@ -20,7 +20,7 @@ const material = new THREE.PointsMaterial({
 const sphere = new THREE.Points(geometry,material)
 scene.add(sphere)
 ```
-![ParticulesMesh](./static/_doc/ParticulesMesh.png)
+![ParticulesMesh.png](./static/_doc/particulesMesh.png)
 
 #### Particules textureLoader
 
